@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 
-
+//          REDIRECT TO USERRIGESTRATION CONTROLLER
 router.post("/register", registerValidation, registeration)
 
 export default router;
