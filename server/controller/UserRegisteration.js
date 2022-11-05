@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { createToken } from './createToken.js';
 import User from "../models/User.js"
 
 //              MIDDLE FOR VALIDATION
@@ -33,7 +33,7 @@ export const registeration = async (req, res) => {
                 bcrypt.hash(password, salt, function (err, hash) {  // HASH PASSWORD
                      User.create({ name, email, password: hash }).    // CREATE USER AND STORE INTO DATABASE
                         then((user) => {
-                            const token = jwt.sign({ user }, process.env.SECRET)    // CREATE TOKEN USING USER DATA AND SECRET KEY.
+                              const token = createToken(user)// CREATE TOKEN USING USER DATA AND SECRET KEY.
                             res.status(200).json({ msg: "created succesfull", token  })
                         })
                 })
