@@ -5,9 +5,9 @@ import User from "../models/User.js"
 
 //              MIDDLE FOR VALIDATION
 export const registerValidation = [
-    body("name").isLength({ min: 2 }),
-    body("email").isEmail(),
-    body("password").isLength({ min: 5 })
+    body("name").not().isEmpty().withMessage("Invalid Name"),
+    body("email").isEmail().withMessage("Invalid Email"),
+    body("password").isLength({ min: 8 }).withMessage("Password must contain atleast 8 alphabets")
 ]
 
 
