@@ -8,7 +8,7 @@ import toast, { Toaster } from "react-hot-toast"
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function Register(prop) {
+function Register (prop) {
   const dispatch = useDispatch();
   const navigate=useNavigate();
   const [state, setState] = useState(
@@ -21,14 +21,17 @@ function Register(prop) {
   )
   const { loading, RegisterError ,user} = useSelector((state) => state.authReducer);
 
+  
 
   useEffect(() => {
-    if (RegisterError.length > 0) {
+    if (RegisterError.length > 0) 
       RegisterError.map(error => toast.error(error.msg))
-    }
+    
     if(user)
       navigate('/dashboard')
-  }, [RegisterError])
+  }, [RegisterError,user])
+
+
   const handleState = (e) => {
     const { name, value } = e.target
     setState({ ...state, [name]: value })
@@ -36,8 +39,14 @@ function Register(prop) {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    dispatch(postRegister(state))
+    if(state.password!==state.cpassword)
+      toast.error("Password does't Match, Please check");
+    else
+      dispatch(postRegister(state));
+
   }
+
+
   return (
     <div className='register-container'>
       <div className='form'>

@@ -1,4 +1,7 @@
 import axios from "axios"
+// import { useDispatch } from "react-redux";
+// import toast, { Toaster } from "react-hot-toast"
+
 
 export const postRegister = (state) => {
   return async (dispatch) => {
@@ -11,9 +14,10 @@ export const postRegister = (state) => {
 
     dispatch({ type: 'SET_LOADER' })
     try {
-      const response = await axios.post('http://localhost:5000/register', state, config)
+      const response = await axios.post('http://localhost:5000/register', state,config)
       if (response) {
         localStorage.setItem('MeduimToken',response.data.token);
+        dispatch({type :"SET_TOKEN",payload:response.data.token})
       }
       else
         dispatch({ type: "REGISTER_ERRORS", payload: response.data.errors })

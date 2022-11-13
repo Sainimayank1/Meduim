@@ -10,21 +10,24 @@ const initail = {
     user:"",
 }
 
-                    // Fetch token from localstorage and Decode with halp of jwt-decode
-const token = localStorage.getItem("MeduimToken");
-if(token)
+const verifyToken = token =>
 {
     const decodedToken = jwt_decode(token)
     const expireIn = new Date(decodedToken.exp*1000);
     if(new Date() >expireIn)
         localStorage.removeItem("MeduimToken")
     else
-    {
-        initail.token=token;
-        const {user}=decodedToken;
-        initail.user=user;
-    }
+        return decodedToken;
     // console.log(decodedToken)
+}
+                    // Fetch token from localstorage and Decode with halp of jwt-decode
+const token = localStorage.getItem("MeduimToken");
+if(token)
+{   
+    const decoded = verifyToken(token); 
+    initail.token=token;
+    const {user}=decoded;
+    initail.user=user;
 }
 
 
@@ -36,6 +39,12 @@ const authReducer = (state = initail, action) => {
         return { ...state, loading: false }
     else if (action.type === "REGISTER_ERRORS")
         return { ...state,RegisterError:action.payload}
+    else if(action.type === "SET_TOKEN")
+    {
+        const decoded = verifyToken(action.payload); 
+        const {user}=decoded;
+        return { ...state,token:action.payload,user:user}
+    }
     else
         return state;
 }
