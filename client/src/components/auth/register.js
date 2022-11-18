@@ -5,12 +5,14 @@ import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { postRegister } from '../../store/asyncMethods/AuthMethods.js'
 import toast, { Toaster } from "react-hot-toast"
-import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 
-function Register (prop) {
+
+function Register(prop) {
   const dispatch = useDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [state, setState] = useState(
     {
       name: "",
@@ -19,17 +21,17 @@ function Register (prop) {
       cpassword: ""
     }
   )
-  const { loading, RegisterError ,user} = useSelector((state) => state.authReducer);
+  const { loading, RegisterError, user } = useSelector((state) => state.authReducer);
 
-  
+
 
   useEffect(() => {
-    if (RegisterError.length > 0) 
+    if (RegisterError.length > 0)
       RegisterError.map(error => toast.error(error.msg))
-    
-    if(user)
-      navigate('/dashboard')
-  }, [RegisterError,user])
+
+    if (user)
+      navigate('/dashboard');
+  }, [RegisterError, user])
 
 
   const handleState = (e) => {
@@ -39,7 +41,7 @@ function Register (prop) {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    if(state.password!==state.cpassword)
+    if (state.password !== state.cpassword)
       toast.error("Password does't Match, Please check");
     else
       dispatch(postRegister(state));
@@ -48,20 +50,26 @@ function Register (prop) {
 
 
   return (
-    <div className='register-container'>
-      <div className='form'>
-        <Toaster position="top-right" reverseOrder={false} toastOptions={{style:{fontSize:'14px'}}}/>
-        <span>Registration</span>
-        <form id='register-form' onSubmit={handleClick} method="POST">
-          <input type="text" name="name" value={state.name} placeholder='Enter Name' onChange={handleState} ></input>
-          <input type="text" name="email" value={state.email} placeholder='Enter Email' onChange={handleState}></input>
-          <input type="password" name="password" value={state.password} placeholder='Enter Password' onChange={handleState}></input>
-          <input type="password" name="cpassword" value={state.cpassword} placeholder='Re-Enter Password' onChange={handleState}></input>
-          <input type="submit" className="button" value={loading ? "..." : 'Register'}>
-          </input>
-        </form>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Register</title>
+      </Helmet>
+      <div className='register-container'>
+        <div className='form'>
+          <Toaster position="top-right" reverseOrder={false} toastOptions={{ style: { fontSize: '14px' } }} />
+          <span>Registration</span>
+          <form id='register-form' onSubmit={handleClick} method="POST">
+            <input type="text" name="name" value={state.name} placeholder='Enter Name' onChange={handleState} ></input>
+            <input type="text" name="email" value={state.email} placeholder='Enter Email' onChange={handleState}></input>
+            <input type="password" name="password" value={state.password} placeholder='Enter Password' onChange={handleState}></input>
+            <input type="password" name="cpassword" value={state.cpassword} placeholder='Re-Enter Password' onChange={handleState}></input>
+            <input type="submit" className="button" value={loading ? "..." : 'Register'}>
+            </input>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

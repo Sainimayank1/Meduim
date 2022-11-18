@@ -1,27 +1,28 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Provider } from "react-redux";
+
 import Home from "./components/Home.js";
 import Login from "./components/auth/Login.js";
 import Register from "./components/auth/Register.js";
 import Navbar from "./components/Navbar.js";
 import Dashboard from "./components/Dashboard.js";
-import store from "./store/index.js";
+import { useSelector } from 'react-redux';
+import NotFound from "./components/auth/NotFound.jsx";
 
 
 function App() {
+  const { user } = useSelector(state => state.authReducer);
   return (
-
-    <Provider store={store}>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/login" exact element={<Login />} />
-          <Route path="/register" exact element={<Register />} />
-          <Route path="/dashboard" exact element={<Dashboard />} />
+          <Route path="/" exact element={user ? <Home /> : <Login/>} />
+          <Route path="/login" exact element={user ? <Dashboard/> : <Login/>} />
+          <Route path="/register" exact element={user ? <Dashboard/> : <Register/>} />
+          <Route path="/dashboard" exact element={user ? <Dashboard/> : <Login/>} />
+          <Route path='*' element={<NotFound/>}/>
         </Routes>
       </BrowserRouter>
-    </Provider>
+    
   );
 }
 
