@@ -1,16 +1,16 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import "../scss/components/_navbar.scss"
 
 
 function Navbar() {
     const { user } = useSelector(state => state.authReducer);
     const dispacth = useDispatch();
-    const logout = () =>
-    {
+    const logout = () => {
         localStorage.removeItem("MeduimToken");
-        dispacth({type : "LOGOUT"});
+        dispacth({ type: "LOGOUT" });
+        <Navigate to="/" />
     }
     return (
         <nav>
@@ -22,12 +22,17 @@ function Navbar() {
                         </Link>
                     </div>
                     <div className='nav_right'>
-                        {user ? <><Link>
-                            <span>{user.name}</span>
-                        </Link>
+                        {user ? <>
+                            <Link to="/create">
+                                <span>Craete Post</span>
+                            </Link>
+                            <Link to="/dashboard">
+                                <span>{user.name}</span>
+                            </Link>
                             <Link onClick={logout}>
                                 <span>Logout</span>
-                            </Link></> 
+                            </Link></>
+
                             :
                             <><Link to="/login">
                                 <span>Login</span>

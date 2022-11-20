@@ -45,6 +45,10 @@ const authReducer = (state = initail, action) => {
         const {user}=decoded;
         return { ...state,token:action.payload,user:user}
     }
+    else if(action.type === "LOGIN_ERRORS")
+    {
+        return {...state , LoginError :action.payload}
+    }
     else if(action.type === "LOGOUT")
         return {...state , token:"" , user:""}
     else

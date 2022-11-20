@@ -10,13 +10,14 @@
     align-items: center;
 
     .login-form{
-        width: 80%;
+        width: 50%;
         height: 50rem;
         // border: 2px solid red;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        border-radius: 1px;
         span{
             margin-bottom: 1rem;
             font-size: 3rem;

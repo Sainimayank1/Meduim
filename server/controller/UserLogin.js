@@ -24,13 +24,13 @@ export const login = async (req, res) => {
             const matched = await bcrypt.compare(password, user.password);
             if (matched) {
                 const token = createToken(user);
-                return res.status(200).json({ msg: "User login succesfully", token });
+                return res.status(200).json({ msg: "User login succesfully", token});
             }
             else
-                return res.status(401).json({ msg: "Password Does't match" });
+                return res.status(401).json({ errors :[ "Password Does't match"] });
         }
         else
-            return res.status(404).json({ msg: "Email not found" });
+            return res.status(404).json({errors: [ "Email not found" ]});
 
     }
     catch (error) {

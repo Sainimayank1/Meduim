@@ -55,8 +55,8 @@ function Register(prop) {
         <meta charSet="utf-8" />
         <title>Register</title>
       </Helmet>
-      <div className='register-container'>
-        <div className='form'>
+      <div className='register-container bg-grey'>
+        <div className='form bg-white'>
           <Toaster position="top-right" reverseOrder={false} toastOptions={{ style: { fontSize: '14px' } }} />
           <span>Registration</span>
           <form id='register-form' onSubmit={handleClick} method="POST">
