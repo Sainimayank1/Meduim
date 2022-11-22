@@ -14,7 +14,7 @@ function Navbar() {
     }
     return (
         <nav>
-            <div className='nav-container'>
+            <div className='nav-container bg-light'>
                 <div className='nav_row'>
                     <div className='nav_left'>
                         <Link to="/">

@@ -6,40 +6,104 @@ import 'react-quill/dist/quill.snow.css';
 
 function Create() {
 
-    const [state,setState] = useState("");
+    const [state, setState] = useState("");
     const [value, setValue] = useState('');
-    const handlefile = (e) =>
-    {
-        // console.log(e)
-        let path = e.target.value.slice(12);
-        // path = path.; 
-        setState(path);
+    const [inputValue, setinputValue] = useState({ title: "" , description :"" ,image:{} })
+    const [slug, setSlug] = useState("");
+    const [slugButton, setButton] = useState(false);
+    const [imagePreview,setimagepreview] = useState("");
+
+    const handlefile = (e) => {
+        setState(e.target.files[0].name);
+        const reader = new FileReader();
+        reader.onloadend = () =>
+        {
+            setimagepreview(reader.result);
+        }
+
+        reader.readAsDataURL(e.target.files[0]);
+        // console.log(e.target.files[0])
+        setinputValue({...inputValue , image : e.target.files[0]})
     }
+
+    const handleInput = (e) => {
+
+        setinputValue({ ...inputValue, title: e.target.value });
+        let slugs = e.target.value.trim().split(" ").join("-");
+        setSlug(slugs);
+    }
+
+    const handleSlug = (e) => {
+        setSlug(e.target.value);
+        // setupdateSlug(e.target.value)
+        setButton(true);
+    }
+
+    const handleSumbit = (e) =>
+    {
+        e.preventDefault();
+        setSlug(slug.trim().split(" ").join("-"));
+        
+    }
+
+    const handleDesc = (e) =>
+    {
+        setinputValue({...inputValue , [e.target.name] : e.target.value})
+    }
+
+    const handleformSubmit = (e) =>
+    {
+        e.preventDefault();
+        console.log(inputValue);
+    }
+
     return (
         <>
             <Helmet>
                 <meta charSet="utf-8" />
-                <title>Login</title>
+                <title>Create Post....</title>
             </Helmet>
             <div className='create_main bg-grey'>
                 <div className='main_left'>
                     <div className='create_form'>
-                    <h3>Create a new post</h3>
-                    <form >
-                        <div className='input_title'>
-                        <label htmlFor="post_title">Post Title</label>
-                        <input className="bg-grey" type="text"  id='post_title' placeholder="Post Title..."></input>
-                        </div>
-                        <div className='input_file'>
-                        <label htmlFor="post_pic">{state ? state : "Choose Image.."}</label>
-                        <input className="bg-grey" type="file"  id='post_pic' onChange={handlefile}></input>
-                        </div>
-                    </form>
-                    <ReactQuill theme="snow" value={value} onChange={setValue} />
+                        <h3>Create a new post</h3>
+                        <form onSubmit={handleformSubmit}>
+                            <div className='input_title'>
+                                <label htmlFor="post_title" >Post Title</label>
+                                <input className="bg-grey" onChange={handleInput} value={inputValue.title} type="text" id='post_title' placeholder="Post Title..."></input>
+                            </div>
+                            <div className='input_file'>
+                                <label htmlFor="post_pic">{state ? state : "Choose Image.."}</label>
+                                <input className="bg-grey" type="file" id='post_pic' onChange={handlefile}></input>
+                            </div>
+                            <label htmlFor="post_body">Post Body</label>
+                            <ReactQuill theme="snow" value={value} onChange={setValue} id="post_body" />
+                            <input type="submit" value="Create Post..." className='input_file'></input>
+                        </form>
+
                     </div>
                 </div>
                 <div className='main_right'>
-                    {/* right */}
+                    <div className='create_slug'>
+                        <form>
+                            <div className='post_url'>
+                                <label htmlFor="slug">Post URL</label>
+                                <input id="slug" type="test" value={slug} placeholder="Post URL" className='bg-grey' onChange={handleSlug} ></input>
+                            </div>
+                            { slugButton ?<div className='slug_button'>
+                                 <button onClick={handleSumbit}>Update Slug</button> 
+                            </div> : ""}
+                        </form>
+                        <div className='imagepreview'>
+                            {imagePreview && <img name="image" src={imagePreview} ></img>}
+                        </div>
+                        <div className='desc'>
+                            <label htmlFor="description">Meta Description</label>
+                            <textarea name="description" cols='30' rows="10" id="description" className='bg-grey' maxLength="150" placeholder='Meta Description...' onChange={handleDesc}>
+                            </textarea>
+                            <p>{inputValue.description ? inputValue.description.length : "0"}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

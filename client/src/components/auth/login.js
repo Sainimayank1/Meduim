@@ -22,7 +22,7 @@ function Login() {
   }
 
   useEffect(() =>{
-    console.log("Hey")
+    // console.log("Hey")
     // if(LoginError.lenght >0)
     // {
       LoginError.map((error) =>toast.error(error));
