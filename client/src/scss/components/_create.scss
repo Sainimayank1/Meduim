@@ -27,6 +27,10 @@
                     border-bottom: 4px solid green;
                 }
             }
+
+            span{
+                margin-left:calc(100% - 8rem);;
+            }
         }
 
         .create_form {

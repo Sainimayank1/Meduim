@@ -5,8 +5,11 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useDispatch, useSelector } from 'react-redux';
 import createAction from "../store/asyncMethods/PostMethods.js"
+import toast, { Toaster } from "react-hot-toast"
+import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
-function Create() {
+function Create(props) {
 
     const [state, setState] = useState("");
     const [value, setValue] = useState('');
@@ -14,20 +17,23 @@ function Create() {
     const [slug, setSlug] = useState("");
     const [slugButton, setButton] = useState(false);
     const [imagePreview, setimagepreview] = useState("");
+    const { createError, redirect } = useSelector(state => state.PostReducer);
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
-    const {user}  = useSelector(state =>state.authReducer);
-    const {_id ,name} = user;
+    const { user, loading } = useSelector(state => state.authReducer);
+    const { _id, name } = user;
     const handlefile = (e) => {
-        setState(e.target.files[0].name);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setimagepreview(reader.result);
-        }
+        if (e.target.files.length !== 0) {
+            setState(e.target.files[0].name);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setimagepreview(reader.result);
+            }
 
-        reader.readAsDataURL(e.target.files[0]);
-        // console.log(e.target.files[0])
-        setinputValue({ ...inputValue, image: e.target.files[0] })
+            reader.readAsDataURL(e.target.files[0]);
+            setinputValue({ ...inputValue, image: e.target.files[0] })
+        }
     }
 
     const handleInput = (e) => {
@@ -51,16 +57,27 @@ function Create() {
         setinputValue({ ...inputValue, [e.target.name]: e.target.value })
     }
 
+    useEffect(()=>
+    { 
+        if(redirect)
+        navigate("/dashboard");
+    },[redirect])
+
+    useEffect(() => {
+        createError.map((error) => toast.error(error.msg));
+
+    }, [createError])
+
     const handleformSubmit = (e) => {
         e.preventDefault();
         const formdata = new FormData();
-        formdata.append("title",inputValue.title);
-        formdata.append("body",value);
-        formdata.append("description",inputValue.description);
-        formdata.append("slug",slug);
-        formdata.append("_id",_id);
-        formdata.append("name",name);
-        formdata.append("image",inputValue.image);
+        formdata.append("title", inputValue.title);
+        formdata.append("body", value);
+        formdata.append("description", inputValue.description);
+        formdata.append("slug", slug);
+        formdata.append("_id", _id);
+        formdata.append("name", name);
+        formdata.append("image", inputValue.image);
         dispatch(createAction(formdata));
     }
 
@@ -74,6 +91,7 @@ function Create() {
                 <div className='main_left'>
                     <div className='create_form'>
                         <h3>Create a new post</h3>
+                        <Toaster position="top-right" reverseOrder={false} toastOptions={{ style: { fontSize: '14px' } }} />
                         <form onSubmit={handleformSubmit}>
                             <div className='input_title'>
                                 <label htmlFor="post_title" >Post Title</label>
@@ -89,7 +107,7 @@ function Create() {
                                 <label htmlFor="description">Meta Description</label>
                                 <textarea name="description" cols='30' rows="10" id="description" className='bg-grey' maxLength="150" placeholder='Meta Description...' onChange={handleDesc}>
                                 </textarea>
-                                <p>{inputValue.description ? inputValue.description.length : "0"}</p>
+                                <p>{inputValue.description ? inputValue.description.length : 0} <span>MAX:150</span></p>
                             </div>
 
                         </form>
@@ -110,7 +128,7 @@ function Create() {
                         <div className='imagepreview'>
                             {imagePreview && <img name="image" src={imagePreview} alt="Image"></img>}
                         </div>
-                        <input type="submit" onClick={handleformSubmit} value="Create Post..." className='input_file'></input>
+                        <input type="submit" onClick={handleformSubmit} value={loading ? "..." : "Create Post..."} className='input_file'></input>
                     </div>
                 </div>
             </div>

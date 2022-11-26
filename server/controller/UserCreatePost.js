@@ -4,11 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import Post from "../models/Post.js"
 
 
-const UserCreatePost = (req,res) => {
+const UserCreatePost =  (req,res) => {
     const form = formidable({ multiples: true })
-    form.parse(req,(error,fields,files) =>
+    form.parse(req,async (error,fields,files) =>
     {
         const errors = [];
         const {title , body , description  , slug ,_id , name  ,image} = fields;
@@ -42,18 +43,46 @@ const UserCreatePost = (req,res) => {
                 errors.push({msg:ext+" is not valid Extension"})
             else
                 files.image.newFilename= uuidv4() + "." + ext;
-                const __filename = fileURLToPath(import.meta.url);
-                const __dirname = dirname(__filename);
-                // 
-                const newPath= __dirname + "/../../client/public/images/" + files.image.newFilename;
-                fs.copyFile(files.image.filepath,newPath,(err)=>{if(!err)console.log("Emage uploaded") })
-                console.log(__dirname)
-
 
          }
+
+         const slugCheck = await Post.findOne({slug});
+         if(slugCheck)
+         {
+            errors.push({msg:"Please choose a unique Slug/URL"})
+         }
+
+
+
         if(errors.length != 0)
         {
             return res.status(400).json({errors,files})  
+        }
+        else
+        {
+            const __filename = fileURLToPath(import.meta.url);
+                const __dirname = dirname(__filename);
+                const newPath= __dirname + "/../../client/public/images/" + files.image.newFilename;
+                fs.copyFile(files.image.filepath,newPath, async (err)=>
+                {
+                    if(!err)
+                   {
+                    try {
+                        const response = await Post.create({title,
+                            body,
+                            image:files.image.newFilename,
+                            description,
+                            slug,
+                            userName:name,
+                            userId:_id
+                        });
+                        if(response)
+                            return res.status(200).json({msg:"Your post has been created Succesfully"});
+                    } catch (error) {
+                        return res.status(500).json({error})
+                    }
+                   }
+                })
         }
     })
 }

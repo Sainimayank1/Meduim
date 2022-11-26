@@ -5,11 +5,13 @@ import thunkMiddleware from "redux-thunk"
 import authReducer from './reducer/authReducer.js'
 import { composeWithDevTools } from 'redux-devtools-extension';
 import PostReducer from './reducer/PostReducer.jsx';
+import fetchReducer from './reducer/fetchReducer.js';
 
 const rootreducer  = combineReducers(
     {
         authReducer,
         PostReducer,
+        fetchReducer,
     }
 );
 

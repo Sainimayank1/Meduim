@@ -15,7 +15,10 @@ const verifyToken = token =>
     const decodedToken = jwt_decode(token)
     const expireIn = new Date(decodedToken.exp*1000);
     if(new Date() >expireIn)
+    {
         localStorage.removeItem("MeduimToken")
+        return null;
+    }
     else
         return decodedToken;
     // console.log(decodedToken)
